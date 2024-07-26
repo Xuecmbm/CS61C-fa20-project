@@ -29,7 +29,7 @@ Image *readData(char *filename)
     FILE *file = fopen(filename, "r");
     if (file == NULL) {
         printf("Error opening file\n");
-        return 0;
+        return NULL;
     }
 
     char header[3];
@@ -39,19 +39,19 @@ Image *readData(char *filename)
     if (fgets(header, sizeof(header), file) == NULL) {
         printf("Failed to read file header\n");
         fclose(file);
-        return 1;
+        return NULL;
     }
     if (strncmp(header, "P3", 2) != 0) {
         printf("Invalid file format: %s\n", header);
         fclose(file);
-        return 1;
+        return NULL;
     }
 
     // Read the next three integers
     if (fscanf(file, "%d %d %d", &width, &height, &maxval) != 3) {
         printf("Failed to read width, height, and maxval\n");
         fclose(file);
-        return 1;
+        return NULL;
     }
     
     Image *image = (Image *)malloc(sizeof(Image));
