@@ -22,7 +22,7 @@
 Color *evaluateOnePixel(Image *image, int row, int col)
 {
 	//YOUR CODE HERE
-    int height = image->cols, width = image->rows;
+    int width = image->cols, height = image->rows;
     Color **color = image->image;
     color += (row * width + col);
 
@@ -44,7 +44,7 @@ Color *evaluateOnePixel(Image *image, int row, int col)
 Image *steganography(Image *image)
 {
 	//YOUR CODE HERE
-    int height = image->cols, width = image->rows;
+    int width = image->cols, height = image->rows;
     Color **color = image->image;
 
     Image *new_image = (Image *)malloc(sizeof(Image));

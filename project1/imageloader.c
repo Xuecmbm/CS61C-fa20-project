@@ -28,7 +28,7 @@ Image *readData(char *filename)
 	//YOUR CODE HERE
     FILE *file = fopen(filename, "r");
     if (file == NULL) {
-        printf("Error opening file\n");
+        printf("Error opening file %s\n", filename);
         return NULL;
     }
 
@@ -55,8 +55,8 @@ Image *readData(char *filename)
     }
     
     Image *image = (Image *)malloc(sizeof(Image));
-    image->rows = width;
-    image->cols = height;
+    image->rows = height;
+    image->cols = width;
     image->image = (Color **)malloc(sizeof(Color *) * width * height);
     Color **now = image->image;
     
