@@ -22,6 +22,13 @@ class TestAbs(TestCase):
         t.check_scalar("a0", 1)
         t.execute()
 
+    def test_minus_one(self):
+        t = AssemblyTest(self, "abs.s")
+        t.input_scalar("a0", -10)
+        t.call("abs")
+        t.check_scalar("a0", 10)
+        t.execute()
+
     @classmethod
     def tearDownClass(cls):
         print_coverage("abs.s", verbose=False)
@@ -40,6 +47,20 @@ class TestRelu(TestCase):
         t.call("relu")
         # check that the array0 was changed appropriately
         t.check_array(array0, [1, 0, 3, 0, 5, 0, 7, 0, 9])
+        # generate the `assembly/TestRelu_test_simple.s` file and run it through venus
+        t.execute()
+    def test_input_null(self):
+        t = AssemblyTest(self, "relu.s")
+        # create an array in the data section
+        array0 = t.array([])
+        # load address of `array0` into register a0
+        t.input_array("a0", array0)
+        # set a1 to the length of our array
+        t.input_scalar("a1", len(array0))
+        # call the relu function
+        t.call("relu")
+        # check that the array0 was changed appropriately
+        t.check_scalar("a0", 78)
         # generate the `assembly/TestRelu_test_simple.s` file and run it through venus
         t.execute()
 
