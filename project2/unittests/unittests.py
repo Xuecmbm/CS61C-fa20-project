@@ -189,19 +189,30 @@ class TestMatmul(TestCase):
         # create arrays for the arguments and to store the result
         array0 = t.array(m0)
         array1 = t.array(m1)
-        array_out = t.array([0] * len(result))
+        if isinstance(result, int):
+            array_out = array0
+        else:
+            array_out = t.array([0] * len(result))
 
         # load address of input matrices and set their dimensions
-        raise NotImplementedError("TODO")
-        # TODO
+        t.input_array("a0", array0)
+        t.input_array("a3", array1)
+        t.input_scalar("a1", m0_rows)
+        t.input_scalar("a2", m0_cols)
+        t.input_scalar("a4", m1_rows)
+        t.input_scalar("a5", m1_cols)
+        
         # load address of output array
-        # TODO
+        t.input_array("a6", array_out)
 
         # call the matmul function
         t.call("matmul")
 
         # check the content of the output array
-        # TODO
+        if isinstance(result, int):
+            t.check_scalar("a0", result)
+        else:
+            t.check_array(array_out, result)
 
         # generate the assembly file and run it through venus, we expect the simulation to exit with code `code`
         t.execute(code=code)
@@ -211,6 +222,24 @@ class TestMatmul(TestCase):
             [1, 2, 3, 4, 5, 6, 7, 8, 9], 3, 3,
             [1, 2, 3, 4, 5, 6, 7, 8, 9], 3, 3,
             [30, 36, 42, 66, 81, 96, 102, 126, 150]
+        )
+    def test_invalid_m0(self):
+        self.do_matmul(
+            [1, 2, 3, 4, 5, 6, 7, 8, 9], 0, 3,
+            [1, 2, 3, 4, 5, 6, 7, 8, 9], 3, 3,
+            72
+        )
+    def test_invalid_m1(self):
+        self.do_matmul(
+            [1, 2, 3, 4, 5, 6, 7, 8, 9], 3, 3,
+            [1, 2, 3, 4, 5, 6, 7, 8, 9], 3, 0,
+            73
+        )
+    def test_not_match(self):
+        self.do_matmul(
+            [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 2, 5,
+            [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 2, 5,
+            74
         )
 
     @classmethod
