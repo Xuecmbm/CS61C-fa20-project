@@ -49,6 +49,7 @@ class TestRelu(TestCase):
         t.check_array(array0, [1, 0, 3, 0, 5, 0, 7, 0, 9])
         # generate the `assembly/TestRelu_test_simple.s` file and run it through venus
         t.execute()
+    
     def test_input_null(self):
         t = AssemblyTest(self, "relu.s")
         # create an array in the data section
@@ -84,6 +85,7 @@ class TestArgmax(TestCase):
         t.check_scalar("a0", 2)
         # generate the `assembly/TestArgmax_test_simple.s` file and run it through venus
         t.execute()
+    
     def test_input_null(self):
         t = AssemblyTest(self, "argmax.s")
         # create an array in the data section
@@ -122,6 +124,7 @@ class TestDot(TestCase):
         # check the return value
         t.check_scalar("a0", 285)
         t.execute()
+    
     def test_stride(self):
         t = AssemblyTest(self, "dot.s")
         # create arrays in the data section
@@ -139,6 +142,7 @@ class TestDot(TestCase):
         # check the return value
         t.check_scalar("a0", 22)
         t.execute()
+    
     def test_invalid_length(self):
         t = AssemblyTest(self, "dot.s")
         # create arrays in the data section
@@ -156,6 +160,7 @@ class TestDot(TestCase):
         # check the return value
         t.check_scalar("a0", 75)
         t.execute()
+    
     def test_invalide_stride(self):
         t = AssemblyTest(self, "dot.s")
         # create arrays in the data section
@@ -223,18 +228,21 @@ class TestMatmul(TestCase):
             [1, 2, 3, 4, 5, 6, 7, 8, 9], 3, 3,
             [30, 36, 42, 66, 81, 96, 102, 126, 150]
         )
+    
     def test_invalid_m0(self):
         self.do_matmul(
             [1, 2, 3, 4, 5, 6, 7, 8, 9], 0, 3,
             [1, 2, 3, 4, 5, 6, 7, 8, 9], 3, 3,
             72
         )
+    
     def test_invalid_m1(self):
         self.do_matmul(
             [1, 2, 3, 4, 5, 6, 7, 8, 9], 3, 3,
             [1, 2, 3, 4, 5, 6, 7, 8, 9], 3, 0,
             73
         )
+    
     def test_not_match(self):
         self.do_matmul(
             [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 2, 5,
@@ -249,7 +257,7 @@ class TestMatmul(TestCase):
 
 class TestReadMatrix(TestCase):
 
-    def do_read_matrix(self, fail='', code=0):
+    def do_read_matrix(self, fail='', code=0, res=0):
         t = AssemblyTest(self, "read_matrix.s")
         # load address to the name of the input file into register a0
         t.input_read_filename("a0", "inputs/test_read_matrix/test_input.bin")
@@ -259,20 +267,38 @@ class TestReadMatrix(TestCase):
         cols = t.array([-1])
 
         # load the addresses to the output parameters into the argument registers
-        raise NotImplementedError("TODO")
-        # TODO
+        t.input_array("a1", rows)
+        t.input_array("a2", cols)
 
         # call the read_matrix function
         t.call("read_matrix")
 
         # check the output from the function
-        # TODO
+        
+        if(fail == ''):
+            t.check_array_pointer("a0", [1, 2, 3, 4, 5, 6, 7, 8, 9])
+            t.check_array(rows, [3])
+            t.check_array(cols, [3])
+        else:
+            t.check_scalar("a0", res)
 
         # generate assembly and run it through venus
         t.execute(fail=fail, code=code)
 
     def test_simple(self):
         self.do_read_matrix()
+    
+    def test_malloc_error(self):
+        self.do_read_matrix("malloc", res=88)
+
+    def test_fopen_error(self):
+        self.do_read_matrix('fopen', res=90)
+    
+    def test_fread_error(self):
+        self.do_read_matrix("fread", res=91)
+
+    def test_fclose_error(self):
+        self.do_read_matrix("fclose", res=92)
 
     @classmethod
     def tearDownClass(cls):
