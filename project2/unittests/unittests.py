@@ -362,15 +362,16 @@ class TestClassify(TestCase):
         ref_file = "outputs/test_basic_main/reference0.bin"
         args = ["inputs/simple0/bin/m0.bin", "inputs/simple0/bin/m1.bin",
                 "inputs/simple0/bin/inputs/input0.bin", out_file]
+        t._input_args(args)
         # call classify function
         t.call("classify")
         # generate assembly and pass program arguments directly to venus
         t.execute(args=args)
 
         # compare the output file and
-        raise NotImplementedError("TODO")
-        # TODO
+        t.check_file_output(out_file, ref_file)
         # compare the classification output with `check_stdout`
+        # t.check_stdout(1)
 
     @classmethod
     def tearDownClass(cls):
@@ -384,6 +385,7 @@ class TestMain(TestCase):
                 f"outputs/test_basic_main/student{output_id}.bin"]
         reference = f"outputs/test_basic_main/reference{output_id}.bin"
         t = AssemblyTest(self, "main.s", no_utils=True)
+        t._input_args(args)
         t.call("main")
         t.execute(args=args, verbose=False)
         t.check_stdout(label)
