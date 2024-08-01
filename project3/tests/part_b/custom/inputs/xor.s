@@ -1,0 +1,16 @@
+# Test `xor`
+    li t0, 0xAA       # t0 = 0xAA
+    li t1, 0x55       # t1 = 0x55
+    xor t2, t0, t1   # t2 = 0xFF
+
+    li t0, 0x1234     # t0 = 0x1234
+    li t1, 0x0000     # t1 = 0x0000
+    xor t2, t0, t1   # t2 = 0x1234
+
+# Test `xori`
+    li t0, 0xF0F0    # t0 = 0xF0F0
+    xori t2, t0, 0x10F   # t2 = 0xFFFF (0xF0F0 ^ 0x0F0F)
+
+    li t0, 0x1234    # t0 = 0x1234
+    xori t1, t0, 0   # t1 = 0x1234 (0x1234 ^ 0x0000)
+
